@@ -10,6 +10,7 @@
 
 #include "character.hpp"
 #include "player.hpp"
+#include "lists.hpp"
 
 class CharacterBuilderForm : public QDialog
 {
@@ -43,29 +44,6 @@ private:
   QComboBox* _classInput;
   QComboBox* _raceInput;
   QLineEdit* _levelInput;
-
-  const QStringList _classList = {"Barbarian",
-                                  "Bard",
-                                  "Cleric",
-                                  "Druid",
-                                  "Fighter",
-                                  "Monk",
-                                  "Paladin",
-                                  "Ranger",
-                                  "Rogue",
-                                  "Sorcerer",
-                                  "Warlock",
-                                  "Wizard"};
-  const QStringList _raceList = {"Aasimar",
-                                 "Dragonborn",
-                                 "Dwarf",
-                                 "Elf",
-                                 "Gnome",
-                                 "Goliath",
-                                 "Halfling",
-                                 "Human",
-                                 "Orc",
-                                 "Tiefling"};
 
   Character* createPlayer();
 

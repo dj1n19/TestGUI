@@ -17,6 +17,7 @@ qt_wrap_cpp(INCLUDES
     includes/ability.hpp
     includes/astat.hpp
     includes/characterbuilderform.hpp
+    includes/charactereditdialog.hpp
     includes/character.hpp
     includes/charactersheetwidget.hpp
     includes/characterlistwidget.hpp
@@ -33,6 +34,7 @@ qt_add_executable(TestGUI
     srcs/astat.cpp
     srcs/character.cpp
     srcs/characterbuilderform.cpp
+    srcs/charactereditdialog.cpp
     srcs/charactersheetwidget.cpp
     srcs/characterlistwidget.cpp
     srcs/characterlistitem.cpp

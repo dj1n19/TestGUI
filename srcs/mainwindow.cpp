@@ -22,21 +22,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_characterBuilderAction, SIGNAL(triggered(bool)), this, SLOT(openCharacterBuilder()));
     
 	connect(this, SIGNAL(showCharacterSheetSignal(Character *)), this, SLOT(showCharacterSheet(Character *)));
+	connect(this, SIGNAL(characterUpdatedSignal(Character *)), this, SLOT(refreshCharacterSheet(Character *)));
 }
 
 void MainWindow::openCharacterBuilder()
 {
-  CharacterBuilderForm  characterBuilderForm(this);
+  	CharacterBuilderForm  characterBuilderForm(this);
 
-  if (characterBuilderForm.exec() == QDialog::Accepted)
-  {
-    Character*  c;
+  	if (characterBuilderForm.exec() == QDialog::Accepted)
+  	{
+    	Character*  c;
 
-    c = characterBuilderForm.createCharacter(CharacterBuilderForm::EType::PLAYER);
-    _characterListWidget->addCharacter(c);
+    	c = characterBuilderForm.createCharacter(CharacterBuilderForm::EType::PLAYER);
+    	_characterListWidget->addCharacter(c);
 
-	connect(_characterListWidget->last()->getButton(), SIGNAL(clicked()), this, SLOT(handleCharacterButton()));
-  }
+		connect(_characterListWidget->last()->getViewButton(), SIGNAL(clicked()), this, SLOT(handleViewCharacterButton()));
+		connect(_characterListWidget->last()->getEditButton(), SIGNAL(clicked()), this, SLOT(handleEditCharacterButton()));
+	}
 }
 
 void MainWindow::createActions()
@@ -63,14 +65,26 @@ void MainWindow::showCharacterSheet(Character* c)
 	if (!c)
 		return;
 
+	if (_openCharacterSheets.contains(c))
+	{
+		_characterSheetArea->setActiveSubWindow(_openCharacterSheets[c]);
+		return ;
+	}
+
 	CharacterSheetWidget* characterSheet = new CharacterSheetWidget(c, this);
 	
 	QMdiSubWindow* subWindow = _characterSheetArea->addSubWindow(characterSheet);
 	subWindow->setWindowTitle(c->getName());
 	subWindow->show();
+
+	_openCharacterSheets[c] = subWindow;
+
+	connect(subWindow, &QMdiSubWindow::destroyed, [this, c]() {
+		_openCharacterSheets.remove(c);
+	});
 }
 
-void MainWindow::handleCharacterButton()
+void MainWindow::handleViewCharacterButton()
 {
 	QPushButton* button = qobject_cast<QPushButton *>(sender());
 	if (!button)
@@ -79,7 +93,7 @@ void MainWindow::handleCharacterButton()
 	Character* character = nullptr;
 	for (int i = 0; i < _characterListWidget->count(); ++i)
 	{
-		if (_characterListWidget->itemAt(i)->getButton() == button)
+		if (_characterListWidget->itemAt(i)->getViewButton() == button)
 		{
 			character = _characterListWidget->itemAt(i)->getCharacter();
 			break;
@@ -88,4 +102,52 @@ void MainWindow::handleCharacterButton()
 
 	if (character)
 		emit showCharacterSheetSignal(character);	
+}
+
+void MainWindow::handleEditCharacterButton()
+{
+	QPushButton* button = qobject_cast<QPushButton *>(sender());
+	if (!button)
+		return;
+
+	Character* character = nullptr;
+	for (int i = 0; i < _characterListWidget->count(); ++i)
+	{
+		if (_characterListWidget->itemAt(i)->getEditButton() == button)
+		{
+			character = _characterListWidget->itemAt(i)->getCharacter();
+			break;
+		}
+	}
+
+	if (character)
+	{
+		CharacterEditDialog editDialog(character, this);
+		if (editDialog.exec() == QDialog::Accepted)
+			emit characterUpdatedSignal(character);
+	}
+}
+
+void MainWindow::refreshCharacterSheet(Character* character)
+{
+	if (_openCharacterSheets.contains(character))
+	{
+		QMdiSubWindow* oldWindow = _openCharacterSheets[character];
+		_openCharacterSheets.remove(character);
+		_characterSheetArea->removeSubWindow(oldWindow);
+		delete oldWindow;
+
+		showCharacterSheet(character);
+	}
+
+	for (int i = 0; i < _characterListWidget->count(); ++i)
+	{
+		CharacterListItem* item = _characterListWidget->itemAt(i);
+
+		if (item->getCharacter() == character)
+		{
+			item->setTitle(character->getName());
+			break;
+		}
+	}
 }

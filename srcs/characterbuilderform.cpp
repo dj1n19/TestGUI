@@ -13,8 +13,8 @@ CharacterBuilderForm::CharacterBuilderForm(QWidget *parent)
   _raceInput = new QComboBox(this);
   _levelInput = new QLineEdit(this);
 
-  _raceInput->insertItems (0, _raceList);
-  _classInput->insertItems (0, _classList);
+  _raceInput->insertItems (0, RACES);
+  _classInput->insertItems (0, CLASSES);
 
   _buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 

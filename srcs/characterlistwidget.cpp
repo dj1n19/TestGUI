@@ -17,9 +17,7 @@ void CharacterListWidget::addCharacter(Character *c)
 		return ;
 	CharacterListItem* item = new CharacterListItem(c, this);
 	_items.push_back(item);
-  	_layout->addWidget(item->getButton());
-
-  	// connect(_characters.last(), SIGNAL(released()), _characters.last(), SLOT(showCharacter()));
+  	_layout->addWidget(item);
 }
 
 CharacterListItem* CharacterListWidget::last()

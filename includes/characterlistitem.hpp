@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QWidget>
+#include <QGroupBox>
 #include <QPushButton>
+#include <QHBoxLayout>
 
 #include "character.hpp"
 
 // Helper class to hold character and button together
-class CharacterListItem : public QWidget
+class CharacterListItem : public QGroupBox
 {
 	Q_OBJECT
 public:
@@ -14,9 +15,12 @@ public:
 	~CharacterListItem();
 
 	Character* getCharacter() const;
-	QPushButton* getButton() const;
+	QPushButton* getViewButton() const;
+	QPushButton* getEditButton() const;
 
 private:
-	Character* _character;
-	QPushButton* _button;
+	Character*		_character;
+	QPushButton* 	_viewButton;
+	QPushButton* 	_editButton;
+	QHBoxLayout* 	_layout;
 };
