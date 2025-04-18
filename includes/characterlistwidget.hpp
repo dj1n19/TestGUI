@@ -6,7 +6,8 @@
 #include <QVector>
 #include <QPushButton>
 
-#include "characterinfowidget.hpp"
+#include "character.hpp"
+#include "characterlistitem.hpp"
 
 class CharacterListWidget : public QGroupBox
 {
@@ -16,11 +17,14 @@ public:
 
   void addCharacter(Character* c);
 
-  CharacterInfoWidget* last();
+  CharacterListItem* last();
+  CharacterListItem* itemAt(unsigned int index);
+
+  int count() const;
 
 private:
   QVBoxLayout*  _layout;
-  QVector<CharacterInfoWidget *> _characters;
+  QVector<CharacterListItem *> _items;
 
 public slots:
 

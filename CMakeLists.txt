@@ -18,8 +18,9 @@ qt_wrap_cpp(INCLUDES
     includes/astat.hpp
     includes/characterbuilderform.hpp
     includes/character.hpp
-    includes/characterinfowidget.hpp
+    includes/charactersheetwidget.hpp
     includes/characterlistwidget.hpp
+    includes/characterlistitem.hpp
     includes/player.hpp
     includes/savingthrow.hpp
     includes/skill.hpp
@@ -32,8 +33,9 @@ qt_add_executable(TestGUI
     srcs/astat.cpp
     srcs/character.cpp
     srcs/characterbuilderform.cpp
-    srcs/characterinfowidget.cpp
+    srcs/charactersheetwidget.cpp
     srcs/characterlistwidget.cpp
+    srcs/characterlistitem.cpp
     srcs/player.cpp
     srcs/savingthrow.cpp
     srcs/skill.cpp

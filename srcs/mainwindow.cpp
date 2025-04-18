@@ -9,19 +9,19 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus();
 
     // _characterInfoWidget = new CharacterInfoWidget(this);
-	_characterInfoArea = new QMdiArea(this);
+	_characterSheetArea = new QMdiArea(this);
     _characterListWidget = new CharacterListWidget(this);
     _characterListDockWidget = new QDockWidget("Character List", this);
     _characterListDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
 	_characterListDockWidget->setWidget(_characterListWidget);
 	
-	setCentralWidget(_characterInfoArea);
+	setCentralWidget(_characterSheetArea);
 	addDockWidget(Qt::LeftDockWidgetArea, _characterListDockWidget);
 
     connect(_exitAction, SIGNAL(triggered(bool)), QApplication::instance(), SLOT(quit()));
     connect(_characterBuilderAction, SIGNAL(triggered(bool)), this, SLOT(openCharacterBuilder()));
     
-	connect(this, SIGNAL(showCharacterSignal(CharacterInfoWidget *)), this, SLOT(showCharacter(CharacterInfoWidget *)));
+	connect(this, SIGNAL(showCharacterSheetSignal(Character *)), this, SLOT(showCharacterSheet(Character *)));
 }
 
 void MainWindow::openCharacterBuilder()
@@ -35,7 +35,7 @@ void MainWindow::openCharacterBuilder()
     c = characterBuilderForm.createCharacter(CharacterBuilderForm::EType::PLAYER);
     _characterListWidget->addCharacter(c);
 
-	connect(_characterListWidget->last()->getButton(), SIGNAL(clicked()), this, SLOT(createCharacterSheet()));
+	connect(_characterListWidget->last()->getButton(), SIGNAL(clicked()), this, SLOT(handleCharacterButton()));
   }
 }
 
@@ -58,13 +58,34 @@ void MainWindow::createMenus()
 	setMenuBar(_menuBar);
 }
 
-void MainWindow::createCharacterSheet()
+void MainWindow::showCharacterSheet(Character* c)
 {
-	emit showCharacterSignal(static_cast<CharacterInfoWidget *>(sender()->parent()));
+	if (!c)
+		return;
+
+	CharacterSheetWidget* characterSheet = new CharacterSheetWidget(c, this);
+	
+	QMdiSubWindow* subWindow = _characterSheetArea->addSubWindow(characterSheet);
+	subWindow->setWindowTitle(c->getName());
+	subWindow->show();
 }
 
-void MainWindow::showCharacter(CharacterInfoWidget *c)
+void MainWindow::handleCharacterButton()
 {
-	_characterInfoArea->addSubWindow(c);
-	std::cout << "SubWindow added " << _characterInfoArea->subWindowList().size() << std::endl;
+	QPushButton* button = qobject_cast<QPushButton *>(sender());
+	if (!button)
+		return;
+
+	Character* character = nullptr;
+	for (int i = 0; i < _characterListWidget->count(); ++i)
+	{
+		if (_characterListWidget->itemAt(i)->getButton() == button)
+		{
+			character = _characterListWidget->itemAt(i)->getCharacter();
+			break;
+		}
+	}
+
+	if (character)
+		emit showCharacterSheetSignal(character);	
 }

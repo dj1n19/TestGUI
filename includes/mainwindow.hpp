@@ -8,10 +8,11 @@
 #include <QDockWidget>
 #include <QVector>
 #include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include "characterbuilderform.hpp"
-#include "characterinfowidget.hpp"
 #include "characterlistwidget.hpp"
+#include "charactersheetwidget.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -31,10 +32,10 @@ private:
     QAction*    _exitAction;
     QAction*    _characterBuilderAction;
 
-	QMdiArea*						_characterInfoArea;
-    QDockWidget*          			_characterListDockWidget;
-    CharacterListWidget*  			_characterListWidget;
-    QVector<CharacterInfoWidget *>  _characterInfoWidgets;
+	QMdiArea*				_characterSheetArea;
+    QDockWidget*          	_characterListDockWidget;
+    CharacterListWidget*	_characterListWidget;
+    QVector<Character *>  	_characters;
 
     // QGridLayout*  _layout;
 
@@ -42,10 +43,10 @@ private:
     void  createActions();
 
 public slots:
-	void showCharacter(CharacterInfoWidget *c);
-	void createCharacterSheet();
+	void showCharacterSheet(Character* c);
+	void handleCharacterButton();
 
 signals:
-	void showCharacterSignal(CharacterInfoWidget *c);
+	void showCharacterSheetSignal(Character* c);
 };
 
